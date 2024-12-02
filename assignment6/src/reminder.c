@@ -2,8 +2,7 @@
 // This file includes the implementation of the functions declared in reminder.h.
 
 #include "reminder.h"
-
-struct Month month;
+#include "linked_list.h"
 
 void initializeMonth(void) {
     // Initialize month information
@@ -52,6 +51,60 @@ int read_reminder(char *str, int n)
     return 1;
   }
   return 0;
+}
+
+// Add a reminder to a specific day
+void add_reminder(int day, const char *reminder) {
+    if (day < 0 || day >= month.month_days) {
+        printf("Error: Invalid day\n");
+        return;
+    }
+    
+    struct Node *new_node = createNode(reminder);
+    if (month.reminders[day] == NULL) {
+        month.reminders[day] = new_node;
+    } else {
+        month.reminders[day] = addNode(month.reminders[day], reminder);
+        free(new_node);  // addNode creates its own node, so we free this one
+    }
+}
+
+// Remove a reminder from a specific day by index
+void remove_reminder(int day, int index) {
+    if (day < 0 || day >= month.month_days) {
+        printf("Error: Invalid day\n");
+        return;
+    }
+    
+    if (month.reminders[day] == NULL) {
+        printf("Error: No reminders for day %d\n", day + 1);
+        return;
+    }
+    
+    struct Node *head = month.reminders[day];
+    if (index == 0) {
+        month.reminders[day] = head->next;
+        free(head);
+        return;
+    }
+    
+    struct Node *current = head;
+    struct Node *prev = NULL;
+    int current_index = 0;
+    
+    while (current != NULL && current_index < index) {
+        prev = current;
+        current = current->next;
+        current_index++;
+    }
+    
+    if (current == NULL) {
+        printf("Error: Invalid reminder index\n");
+        return;
+    }
+    
+    prev->next = current->next;
+    free(current);
 }
 
 void print_calendar(void) {

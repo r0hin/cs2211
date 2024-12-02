@@ -28,5 +28,8 @@ extern struct Month month;
 void initializeMonth(void);
 void print_calendar(void);
 void cleanup_calendar(void);
+void add_reminder(int day, const char *reminder);
+void remove_reminder(int day, int index);
+int read_reminder(char *str, int n);
 
 #endif
